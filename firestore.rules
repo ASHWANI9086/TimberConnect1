@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    match /listings/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['id','sp','g','price','qty','seller','city','st','ph','addr','note','ts'])
+        && request.resource.data.price is number && request.resource.data.price > 0 && request.resource.data.price < 1000000
+        && request.resource.data.qty is number && request.resource.data.qty > 0
+        && request.resource.data.seller is string && request.resource.data.seller.size() < 81
+        && request.resource.data.ph is string && request.resource.data.ph.size() == 10;
+      allow update, delete: if false;
+    }
+  }
+}
